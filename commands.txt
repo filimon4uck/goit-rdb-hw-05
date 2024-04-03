@@ -1,0 +1,32 @@
+P1)
+SELECT *, (SELECT customer_id FROM orders WHERE id = od.order_id)
+AS customer_id FROM order_details od
+
+P2)
+SELECT * FROM order_details
+WHERE order_id IN (SELECT id FROM orders WHERE shipper_id=3 )
+
+P3)
+SELECT order_id, AVG(quantity) AS average_quantity FROM 
+(SELECT * FROM order_details WHERE quantity>10) AS temp
+GROUP BY order_id;
+
+P4)
+WITH temp AS (SELECT * FROM order_details WHERE quantity>10)
+SELECT order_id, AVG(quantity) AS average_quantity FROM 
+temp
+GROUP BY order_id;
+
+P5)
+DROP FUNCTION IF EXISTS Devide; 
+DELIMITER //
+CREATE FUNCTION Devide(firstValue FLOAT, secondValue FLOAT)
+RETURNS FLOAT DETERMINISTIC 
+NO SQL
+BEGIN
+    DECLARE result FLOAT;
+    SET result = firstValue / secondValue;
+    RETURN result;
+END //
+DELIMITER ;
+select *,  Devide(quantity, 2.0) as devide_quantity from order_details;
